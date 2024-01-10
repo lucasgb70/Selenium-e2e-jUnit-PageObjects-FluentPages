@@ -1,7 +1,10 @@
 package paginas;
 
+import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+
+import java.util.ArrayList;
 
 public class LoginPage {
     private WebDriver browser;
@@ -9,22 +12,30 @@ public class LoginPage {
     public LoginPage(WebDriver browser){
         this.browser = browser;
     }
-    //Se vai preencher e ficar na mesma página retorna a mesma página se for pra próxima página,
-    // informaria ao inves de loginpage a próxima page
+
     public LoginPage informarOUsuario(String usuario){
-        browser.findElement(By.cssSelector("label[for='usuario']")).click();
-        browser.findElement(By.id("usuario")).sendKeys(usuario);
+        browser.findElement(By.id("user-name")).sendKeys(usuario);
         return this;
     }
 
     public LoginPage informarASenha(String senha){
-        browser.findElement(By.cssSelector("label[for='senha']")).click();
-        browser.findElement(By.id("senha")).sendKeys(senha);
+        browser.findElement(By.id("password")).sendKeys( senha);
         return this;
     }
 
-    public ListaDeProdutosPage submeterFormularioDeLogin(){
-        browser.findElement(By.name("action")).click();
+    public LoginPage submeterFormularioLoginErro(){
+        browser.findElement(By.id("login-button")).click();
+        return this;
+        //return new ListaDeProdutosPage(browser);
+    }
+
+    public String capturarMensagemErro(){
+        return browser.findElement(By.cssSelector("h3[data-test='error']")).getText();
+    }
+
+    public ListaDeProdutosPage submeterFormularioLogin(){
+        browser.findElement(By.id("login-button")).click();
         return new ListaDeProdutosPage(browser);
     }
+
 }

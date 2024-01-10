@@ -1,8 +1,10 @@
 package modulos.login;
+import dev.failsafe.internal.util.Assert;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import paginas.LoginPage;
 
 import java.time.Duration;
 
@@ -23,74 +25,87 @@ public class LoginTest {
     @Test
     @DisplayName("Testar login ambos em branco")
     public void testLoginComUserESenhaEmBranco(){
-        browser.findElement(By.id("login-button")).click();
-
-        String messageError = browser.findElement(By.cssSelector("h3[data-test='error']")).getText();
-        Assertions.assertEquals("Epic sadface: Username is required", messageError);
+        String mensagemApresentada = new LoginPage(browser)
+                .submeterFormularioLoginErro()
+                .capturarMensagemErro();
+        Assertions.assertEquals("Epic sadface: Username is required", mensagemApresentada);
     }
 
     @Test
     @DisplayName("Testar login com user em branco")
     public void testLoginComUserEmBranco(){
-        browser.findElement(By.id("password")).sendKeys( "secret_sauce");
-        browser.findElement(By.id("login-button")).click();
-
-        String messageError = browser.findElement(By.cssSelector("h3[data-test='error']")).getText();
-        Assertions.assertEquals("Epic sadface: Username is required", messageError);
+        String mensagemApresentada = new LoginPage(browser)
+                .informarASenha("secret_sauce")
+                .submeterFormularioLoginErro()
+                .capturarMensagemErro();
+        Assertions.assertEquals("Epic sadface: Username is required", mensagemApresentada);
     }
 
     @Test
     @DisplayName("Testar login com senha em branco")
     public void testLoginComSenhaEmBranco(){
-        browser.findElement(By.id("user-name")).sendKeys("standard_user");
-        browser.findElement(By.id("login-button")).click();
+        String mensagemApresentada = new LoginPage(browser)
+                .informarOUsuario("standard_user")
+                .submeterFormularioLoginErro()
+                .capturarMensagemErro();
+        Assertions.assertEquals("Epic sadface: Password is required", mensagemApresentada);
 
-        String messageError = browser.findElement(By.cssSelector("h3[data-test='error']")).getText();
-        Assertions.assertEquals("Epic sadface: Password is required", messageError);
     }
 
     @Test
     @DisplayName("Testar login com senha não existente e login existente")
     public void testLoginComSenhaNaoExistenteEUserExistente(){
-        browser.findElement(By.id("user-name")).sendKeys("standard_user");
-        browser.findElement(By.id("password")).sendKeys( "Senha Incorreta");
-        browser.findElement(By.id("login-button")).click();
-
-        String messageError = browser.findElement(By.cssSelector("h3[data-test='error']")).getText();
-        Assertions.assertEquals("Epic sadface: Username and password do not match any user in this service", messageError);
+        String mensagemApresentada = new LoginPage(browser)
+                .informarOUsuario("standard_user")
+                .informarASenha("Senha Incorreta")
+                .submeterFormularioLoginErro()
+                .capturarMensagemErro();
+        Assertions.assertEquals("Epic sadface: Username and password do not match any user in this service", mensagemApresentada);
     }
 
     @Test
     @DisplayName("Testar login com senha existente e login não existente")
     public void testLoginComSenhaExistenteEUserNaoExistente(){
-        browser.findElement(By.id("user-name")).sendKeys("User Errado");
-        browser.findElement(By.id("password")).sendKeys( "secret_sauce");
-        browser.findElement(By.id("login-button")).click();
-
-        String messageError = browser.findElement(By.cssSelector("h3[data-test='error']")).getText();
-        Assertions.assertEquals("Epic sadface: Username and password do not match any user in this service", messageError);
+        String mensagemApresentada = new LoginPage(browser)
+                .informarOUsuario("User Errado")
+                .informarASenha("secret_sauce")
+                .submeterFormularioLoginErro()
+                .capturarMensagemErro();
+        Assertions.assertEquals("Epic sadface: Username and password do not match any user in this service", mensagemApresentada);
     }
 
     @Test
     @DisplayName("Testar login com user e senha não existentes")
     public void testLoginComUserESenhaNãoExistentes(){
-        browser.findElement(By.id("user-name")).sendKeys("User Errado");
-        browser.findElement(By.id("password")).sendKeys( "Senha Incorreta");
-        browser.findElement(By.id("login-button")).click();
-
-        String messageError = browser.findElement(By.cssSelector("h3[data-test='error']")).getText();
-        Assertions.assertEquals("Epic sadface: Username and password do not match any user in this service", messageError);
+        String mensagemApresentada = new LoginPage(browser)
+                .informarOUsuario("User Errado")
+                .informarASenha("Senha Incorreta")
+                .submeterFormularioLoginErro()
+                .capturarMensagemErro();
+        Assertions.assertEquals("Epic sadface: Username and password do not match any user in this service", mensagemApresentada);
     }
 
     @Test
     @DisplayName("Testar login bloqueado")
     public void testLoginBloqueado(){
-        browser.findElement(By.id("user-name")).sendKeys("locked_out_user");
-        browser.findElement(By.id("password")).sendKeys( "secret_sauce");
-        browser.findElement(By.id("login-button")).click();
+        String mensagemApresentada = new LoginPage(browser)
+                .informarOUsuario("locked_out_user")
+                .informarASenha("secret_sauce")
+                .submeterFormularioLoginErro()
+                .capturarMensagemErro();
+        Assertions.assertEquals("Epic sadface: Sorry, this user has been locked out.", mensagemApresentada);
+    }
 
-        String messageError = browser.findElement(By.cssSelector("h3[data-test='error']")).getText();
-        Assertions.assertEquals("Epic sadface: Sorry, this user has been locked out.", messageError);
+    @Test
+    @DisplayName("Testar login com credenciais válidas")
+    public void testRealizarLoginNormal(){
+        new LoginPage(browser)
+                .informarOUsuario("standard_user")
+                .informarASenha("secret_sauce")
+                .submeterFormularioLogin()
+                .verificaLoginSucesso()
+                ;
+        Assertions
     }
 
     @AfterEach

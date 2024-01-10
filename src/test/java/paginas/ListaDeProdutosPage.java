@@ -10,8 +10,11 @@ public class ListaDeProdutosPage {
         this.browser = browser;
     }
 
+    public String verificaLoginSucesso(){
+        return browser.findElement(By.className("shopping_cart_container")).getText();
+    }
+
     public FormularioDeAdicaoDeProdutoPage acessarFormularioAdicaoNovoProduto(){
-        //Vou para a tela de registro de produto
         browser.findElement(By.linkText("ADICIONAR PRODUTO")).click();
         return new FormularioDeAdicaoDeProdutoPage(browser);
     }
