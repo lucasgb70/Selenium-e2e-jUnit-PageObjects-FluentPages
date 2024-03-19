@@ -25,7 +25,7 @@ public class LoginTest {
     }
 
     @Test
-    @DisplayName("Testar login ambos em branco")
+    @DisplayName("Testar login ambos em branco.")
     public void testLoginComUserESenhaEmBranco(){
         String mensagemApresentada = new LoginPage(browser)
                 .submeterFormularioLoginErro()
