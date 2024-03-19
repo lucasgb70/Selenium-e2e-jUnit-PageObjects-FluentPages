@@ -1,8 +1,10 @@
 package modulos.login;
 import dev.failsafe.internal.util.Assert;
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import paginas.LoginPage;
 
@@ -15,10 +17,10 @@ public class LoginTest {
 
     @BeforeEach
     public void beforeEach(){
-        System.setProperty("webdriver.chrome.driver", "C:\\Drivers\\ChromeDriver\\chromedriver.exe");
+        WebDriverManager.chromedriver().setup();
         this.browser = new ChromeDriver();
         this.browser.manage().window().maximize();
-        this.browser.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+        this.browser.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         this.browser.get("https://www.saucedemo.com/");
     }
 
@@ -105,11 +107,12 @@ public class LoginTest {
                 .submeterFormularioLogin()
                 .verificaLoginSucesso()
                 ;
-        Assertions
+        String title = browser.findElement(By.className("title")).getText();
+        Assertions.assertEquals(title, "Products");
     }
 
     @AfterEach
     public void afterEach(){
-        //browser.quit();
+        browser.quit();
     }
 }
