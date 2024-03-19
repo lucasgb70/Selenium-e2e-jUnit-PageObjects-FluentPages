@@ -14,15 +14,23 @@ public class ListaDeProdutosPage {
         return browser.findElement(By.className("shopping_cart_container")).getText();
     }
 
-    public FormularioDeAdicaoDeProdutoPage acessarFormularioAdicaoNovoProduto(){
-        browser.findElement(By.linkText("ADICIONAR PRODUTO")).click();
-        return new FormularioDeAdicaoDeProdutoPage(browser);
+    public ListaDeProdutosPage adicionaItemNoCarrinho(String id,Double chartValue){
+        browser.findElement(By.id(id)).click();
+        return this;
     }
 
-    public String capturarMensagemApresentada(){
-        //Vou validar que a mensagem de erro foi apresentada
-        // Buscando por duas classes no elemenmto<div class="toast rounded" style="top: 0px; transition: transform 0.2s ease 0s, opacity 0.2s ease 0s;">O valor do produto deve estar entre R$ 0,01 e R$ 7.000,00</div>
-        return browser.findElement(By.cssSelector(".toast.rounded")).getText();
+    public ListaDeProdutosPage somaValorDoProdutoNoCarrinho(String id,Double chartValue){
+        browser.findElement(By.xpath("//*[contains(text(), 'Sauce Labs Backpack')]")).click();
+        String valueWithoutDollarSign = browser.findElement(By.className("inventory_details_price")).getText().replaceAll("[$]", "");
+        chartValue += Double.parseDouble(valueWithoutDollarSign);
+        browser.findElement(By.id("back-to-products")).click();
+        return this;
+    }
+
+
+
+    public String capturarMensagemApresentadaViaClass(String className){
+        return browser.findElement(By.className(className)).getText();
     }
 
 }
